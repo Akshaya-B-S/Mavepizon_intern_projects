@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Purchase Prediction</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <h1>
+            <i class="fa-solid fa-cart-shopping"></i>
+            Customer Purchase Prediction
+        </h1>
+
+        <form action="/predict" method="POST">
+            <div class="form-grid">
+
+                <!-- Age -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user"></i> Age</label>
+                    <input type="number" name="Age" value="{{ form_data.get('Age', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Gender -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-venus-mars"></i> Gender</label>
+                    <select name="Gender">
+                        <option {% if form_data and form_data.get('Gender') == 'Male' %}selected{% endif %}>Male</option>
+                        <option {% if form_data and form_data.get('Gender') == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+
+                <!-- Item -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-cart-shopping"></i> Item Purchased</label>
+                    <input type="text" name="Item Purchased" value="{{ form_data.get('Item Purchased', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Purchase Amount -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-dollar-sign"></i> Purchase Amount (USD)</label>
+                    <input type="number" step="0.01" name="Purchase Amount (USD)" value="{{ form_data.get('Purchase Amount (USD)', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Location -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> Location</label>
+                    <input type="text" name="Location" value="{{ form_data.get('Location', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Size -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-shirt"></i> Size</label>
+                    <select name="Size">
+                        <option {% if form_data and form_data.get('Size') == 'S' %}selected{% endif %}>S</option>
+                        <option {% if form_data and form_data.get('Size') == 'M' %}selected{% endif %}>M</option>
+                        <option {% if form_data and form_data.get('Size') == 'L' %}selected{% endif %}>L</option>
+                        <option {% if form_data and form_data.get('Size') == 'XL' %}selected{% endif %}>XL</option>
+                    </select>
+                </div>
+
+                <!-- Color -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-palette"></i> Color</label>
+                    <input type="text" name="Color" value="{{ form_data.get('Color', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Season -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-cloud-sun"></i> Season</label>
+                    <select name="Season">
+                        <option {% if form_data and form_data.get('Season') == 'Spring' %}selected{% endif %}>Spring</option>
+                        <option {% if form_data and form_data.get('Season') == 'Summer' %}selected{% endif %}>Summer</option>
+                        <option {% if form_data and form_data.get('Season') == 'Autumn' %}selected{% endif %}>Autumn</option>
+                        <option {% if form_data and form_data.get('Season') == 'Winter' %}selected{% endif %}>Winter</option>
+                    </select>
+                </div>
+
+                <!-- Rating -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-star"></i> Review Rating</label>
+                    <input type="number" step="0.1" min="1" max="5" name="Review Rating" value="{{ form_data.get('Review Rating', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Subscription -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-user-check"></i> Subscription Status</label>
+                    <select name="Subscription Status">
+                        <option {% if form_data and form_data.get('Subscription Status') == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option {% if form_data and form_data.get('Subscription Status') == 'No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-credit-card"></i> Payment Method</label>
+                    <select name="Payment Method">
+                        <option {% if form_data and form_data.get('Payment Method') == 'Cash' %}selected{% endif %}>Cash</option>
+                        <option {% if form_data and form_data.get('Payment Method') == 'Credit Card' %}selected{% endif %}>Credit Card</option>
+                        <option {% if form_data and form_data.get('Payment Method') == 'Debit Card' %}selected{% endif %}>Debit Card</option>
+                        <option {% if form_data and form_data.get('Payment Method') == 'PayPal' %}selected{% endif %}>PayPal</option>
+                        <option {% if form_data and form_data.get('Payment Method') == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+                    </select>
+                </div>
+
+                <!-- Shipping -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-truck-fast"></i> Shipping Type</label>
+                    <select name="Shipping Type">
+                        <option {% if form_data and form_data.get('Shipping Type') == 'Standard' %}selected{% endif %}>Standard</option>
+                        <option {% if form_data and form_data.get('Shipping Type') == 'Express' %}selected{% endif %}>Express</option>
+                        <option {% if form_data and form_data.get('Shipping Type') == 'Free Shipping' %}selected{% endif %}>Free Shipping</option>
+                        <option {% if form_data and form_data.get('Shipping Type') == 'Next Day Air' %}selected{% endif %}>Next Day Air</option>
+                    </select>
+                </div>
+
+                <!-- Discount -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-tags"></i> Discount Applied</label>
+                    <select name="Discount Applied">
+                        <option {% if form_data and form_data.get('Discount Applied') == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option {% if form_data and form_data.get('Discount Applied') == 'No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <!-- Promo -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-ticket"></i> Promo Code Used</label>
+                    <select name="Promo Code Used">
+                        <option {% if form_data and form_data.get('Promo Code Used') == 'Yes' %}selected{% endif %}>Yes</option>
+                        <option {% if form_data and form_data.get('Promo Code Used') == 'No' %}selected{% endif %}>No</option>
+                    </select>
+                </div>
+
+                <!-- Previous Purchases -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-chart-line"></i> Previous Purchases</label>
+                    <input type="number" name="Previous Purchases" value="{{ form_data.get('Previous Purchases', '') if form_data else '' }}" required>
+                </div>
+
+                <!-- Preferred Payment Method -->
+                <div class="form-group">
+                    <label><i class="fa-solid fa-wallet"></i> Preferred Payment Method</label>
+                    <select name="Preferred Payment Method">
+                        <option {% if form_data and form_data.get('Preferred Payment Method') == 'Cash' %}selected{% endif %}>Cash</option>
+                        <option {% if form_data and form_data.get('Preferred Payment Method') == 'Credit Card' %}selected{% endif %}>Credit Card</option>
+                        <option {% if form_data and form_data.get('Preferred Payment Method') == 'Debit Card' %}selected{% endif %}>Debit Card</option>
+                        <option {% if form_data and form_data.get('Preferred Payment Method') == 'PayPal' %}selected{% endif %}>PayPal</option>
+                        <option {% if form_data and form_data.get('Preferred Payment Method') == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+                    </select>
+                </div>
+
+                <!-- Frequency -->
+                <div class="form-group full-width">
+                    <label><i class="fa-solid fa-repeat"></i> Frequency of Purchases</label>
+                    <select name="Frequency of Purchases">
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Weekly' %}selected{% endif %}>Weekly</option>
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Bi-Weekly' %}selected{% endif %}>Bi-Weekly</option>
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Monthly' %}selected{% endif %}>Monthly</option>
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Quarterly' %}selected{% endif %}>Quarterly</option>
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Annually' %}selected{% endif %}>Annually</option>
+                        <option {% if form_data and form_data.get('Frequency of Purchases') == 'Fortnightly' %}selected{% endif %}>Fortnightly</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group full-width">
+                    <button type="submit">
+                        <i class="fa-solid fa-brain"></i>
+                        Predict Category
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result full-width">
+            {{ prediction_text }}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
